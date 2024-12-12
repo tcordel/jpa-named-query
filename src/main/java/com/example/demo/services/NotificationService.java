@@ -1,5 +1,6 @@
 package com.example.demo.services;
 
+import org.springframework.aop.framework.AopContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,6 +20,7 @@ import jakarta.persistence.criteria.CriteriaDelete;
 import jakarta.persistence.criteria.CriteriaQuery;
 import jakarta.persistence.criteria.Root;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,7 +30,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
 @Service
-@Transactional
 @RequiredArgsConstructor
 @Slf4j
 public class NotificationService {
@@ -36,22 +37,11 @@ public class NotificationService {
 	private final UserNotifAppliRepository userNotifAppliRepository;
 	private final EntityManagerFactory entityManagerFactory;
 
-	public void removeTypeNotif(UtilisateurEntity pkUser, TypeNotificationEntity pkTypeNotif) {
-		userNotifRepository.deleteAllByUserAndTypeNotif(pkUser, pkTypeNotif);
-	}
-
-	@Transactional(propagation = Propagation.REQUIRES_NEW)
-	public void removeTypeNotifWithNewTransaction(UtilisateurEntity pkUser, TypeNotificationEntity pkTypeNotif) {
-		userNotifRepository.deleteAllByUserAndTypeNotif(pkUser, pkTypeNotif);
-	}
-
 	@Transactional(readOnly = true)
 	public Map<TypeNotificationEntity, List<UserNotifAppliEntity>> makeAppNotifMapFromUserNotif(
 			UtilisateurEntity user) {
 		Map<TypeNotificationEntity, List<UserNotifAppliEntity>> userNotifMap = new HashMap<>();
-		log.warn("@@@ findAllUserNotifAppli");
 		List<UserNotifAppliEntity> thisMakesItBug = userNotifAppliRepository.findAll();
-		log.warn("@@@ findAllUserNotif");
 		for (UserNotifEntity userNotif : userNotifRepository.findAllByUser(user)) {
 			userNotifMap.put(userNotif.getTypeNotif(), null);
 		}
@@ -65,7 +55,46 @@ public class NotificationService {
 		userNotifAppliRepository.save(entity);
 	}
 
-	public void removeNotification(UtilisateurEntity user) {
+	public void unsubscribeWithoutTransaction(UtilisateurEntity user) {
+
+		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			removeTypeNotif(user, typeNotif);
+		}
+	}
+
+	private List<TypeNotificationEntity> getTypeNotifsForbidden(UtilisateurEntity user) {
+		List<TypeNotificationEntity> typeNotifsForbidden = new ArrayList<>();
+		for (Entry<TypeNotificationEntity, List<UserNotifAppliEntity>> entry : makeAppNotifMapFromUserNotif(user)
+				.entrySet()) {
+			typeNotifsForbidden.add(entry.getKey());
+		}
+		return typeNotifsForbidden;
+	}
+
+	@Transactional
+	public void unsubscribeWithTransaction(UtilisateurEntity user) {
+		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			removeTypeNotif(user, typeNotif);
+		}
+	}
+
+	@Transactional
+	public void unsubscribeWithTransactionRequireNewOnDelete(UtilisateurEntity user) {
+		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			((NotificationService) AopContext.currentProxy()).removeTypeNotifWithNewTransaction(user, typeNotif);
+		}
+	}
+
+	public void removeTypeNotif(UtilisateurEntity pkUser, TypeNotificationEntity pkTypeNotif) {
+		userNotifRepository.deleteAllByUserAndTypeNotif(pkUser, pkTypeNotif);
+	}
+
+	@Transactional(propagation = Propagation.REQUIRES_NEW)
+	public void removeTypeNotifWithNewTransaction(UtilisateurEntity pkUser, TypeNotificationEntity pkTypeNotif) {
+		userNotifRepository.deleteAllByUserAndTypeNotif(pkUser, pkTypeNotif);
+	}
+
+	public void removeNotificationUsingEntityManagerFactory(UtilisateurEntity user) {
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
