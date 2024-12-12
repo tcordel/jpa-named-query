@@ -58,7 +58,7 @@ public class NotificationService {
 	public void unsubscribeWithoutTransaction(UtilisateurEntity user) {
 
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
-			removeTypeNotif(user, typeNotif);
+			userNotifRepository.deleteAllByUserAndTypeNotif(user, typeNotif);
 		}
 	}
 
@@ -74,8 +74,9 @@ public class NotificationService {
 	@Transactional
 	public void unsubscribeWithTransaction(UtilisateurEntity user) {
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
-			removeTypeNotif(user, typeNotif);
+			userNotifRepository.deleteAllByUserAndTypeNotif(user, typeNotif);
 		}
+		log.error("@@@ End");
 	}
 
 	@Transactional
@@ -86,7 +87,8 @@ public class NotificationService {
 	}
 
 	public void removeTypeNotif(UtilisateurEntity pkUser, TypeNotificationEntity pkTypeNotif) {
-		userNotifRepository.deleteAllByUserAndTypeNotif(pkUser, pkTypeNotif);
+		log.error("@@@ Delete");
+		userNotifRepository.deleteAllByUser_PkAndTypeNotif_Pk(pkUser, pkTypeNotif);
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -95,6 +97,7 @@ public class NotificationService {
 	}
 
 	public void removeNotificationUsingEntityManagerFactory(UtilisateurEntity user) {
+		log.error("@@@ Start");
 		EntityManager entityManager = entityManagerFactory.createEntityManager();
 		entityManager.getTransaction().begin();
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
@@ -127,5 +130,6 @@ public class NotificationService {
 		}
 		entityManager.getTransaction().commit();
 
+		log.error("@@@ End");
 	}
 }

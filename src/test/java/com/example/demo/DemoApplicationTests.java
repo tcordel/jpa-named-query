@@ -1,5 +1,7 @@
 package com.example.demo;
 
+import static org.assertj.core.api.Assertions.assertThat;
+
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,12 @@ import java.util.List;
 import java.util.Map.Entry;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @SpringBootTest
 @RequiredArgsConstructor
 @DirtiesContext(methodMode = MethodMode.AFTER_METHOD)
+@Slf4j
 class DemoApplicationTests {
 	@Autowired
 	NotificationService notificationService;
@@ -53,12 +57,17 @@ class DemoApplicationTests {
 
 	@Test
 	void buggyWithTransaction() {
+		log.error("@@@ Start");
 		notificationService.unsubscribeWithTransaction(user);
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
 	}
 
 	@Test
 	void workingWithoutTransaction() {
 		notificationService.unsubscribeWithoutTransaction(user);
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
 	}
 
 	@Test
@@ -70,15 +79,21 @@ class DemoApplicationTests {
 		for (TypeNotificationEntity typeNotif : typeNotifsForbidden) {
 			notificationService.removeTypeNotif(user, typeNotif);
 		}
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
 	}
 
 	@Test
 	void workingRequiringNewTransactionForDeletion() {
 		notificationService.unsubscribeWithTransactionRequireNewOnDelete(user);
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
 	}
 
 	@Test
 	void workingUsingEntityManager () {
 		notificationService.removeNotificationUsingEntityManagerFactory(user);
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
 	}
 }
