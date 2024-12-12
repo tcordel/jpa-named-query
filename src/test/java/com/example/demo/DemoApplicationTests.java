@@ -75,6 +75,13 @@ class DemoApplicationTests {
 	}
 
 	@Test
+	void workingInSameConditionWithCriteriaForDeletion() {
+		log.error("@@@ Start");
+		notificationService.unsubscribeWithTransactionalUsingCriteriaForDeletion(user);
+		assertThat(userNotifRepository.findAll())
+			.isEmpty();
+	}
+	@Test
 	void workingWithoutTransactional() {
 		notificationService.unsubscribeWithoutTransactional(user);
 		assertThat(userNotifRepository.findAll())

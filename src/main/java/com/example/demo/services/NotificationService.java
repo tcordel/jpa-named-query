@@ -39,7 +39,12 @@ public class NotificationService {
 	public Map<TypeNotificationEntity, List<UserNotifAppliEntity>> makeAppNotifMapFromUserNotif(
 			UtilisateurEntity user) {
 		Map<TypeNotificationEntity, List<UserNotifAppliEntity>> userNotifMap = new HashMap<>();
+
+		/**
+		 * This line is unused for current example but removing it make the issue disappear
+		 */
 		List<UserNotifAppliEntity> thisMakesItBug = userNotifAppliRepository.findAll();
+
 		for (UserNotifEntity userNotif : userNotifRepository.findAllByUser(user)) {
 			userNotifMap.put(userNotif.getTypeNotif(), null);
 		}
@@ -71,13 +76,23 @@ public class NotificationService {
 	}
 
 	@Transactional
-    public void unsubscribeWithTransactionalUsingJpqlForDeletion(UtilisateurEntity user) {
+	public void unsubscribeWithTransactionalUsingJpqlForDeletion(UtilisateurEntity user) {
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
 			log.error("@@@ Delete");
 			userNotifRepository.jpqlDelete(user, typeNotif);
 		}
 		log.error("@@@ End");
+	}
+
+	@Transactional
+    public void unsubscribeWithTransactionalUsingCriteriaForDeletion(UtilisateurEntity user) {
+        for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			log.error("@@@ Delete");
+			userNotifRepository.criteriaDelete(user, typeNotif);
+		}
+		log.error("@@@ End");
     }
+
 
 	@Transactional
 	public void unsubscribeWithTransactionRequiresNewOnDelete(UtilisateurEntity user) {
