@@ -12,11 +12,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 @Entity
 @Table(name = "USER_NOTIF_APPLI")
 @Getter @Setter
+@NoArgsConstructor
 public class UserNotifAppliEntity {
 
 	@Id
@@ -32,5 +34,9 @@ public class UserNotifAppliEntity {
 	@JoinColumn(name = "PK_APPLICATION", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private ApplicationEntity application;
-	
+
+	public UserNotifAppliEntity(UserNotifEntity userNotif, ApplicationEntity application) {
+		this.userNotif = userNotif;
+		this.application = application;
+	}
 }

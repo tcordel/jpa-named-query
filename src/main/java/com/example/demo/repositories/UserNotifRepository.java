@@ -21,7 +21,7 @@ public interface UserNotifRepository extends JpaRepository<UserNotifEntity, Long
 	@Query("DELETE FROM UserNotifEntity une WHERE une.user=:user AND une.typeNotif=:typeNotif")
 	@Modifying
 	@Transactional
-	void deleteAllByUser_PkAndTypeNotif_Pk(UtilisateurEntity user, TypeNotificationEntity typeNotif);
+	void jpqlDelete(UtilisateurEntity user, TypeNotificationEntity typeNotif);
 	
 	@NativeQuery("DELETE FROM USERNOTIF WHERE PK_USER=:pkUser AND PK_TYPENOTIFICATION=:pkTypeNotif")
 	@Modifying
