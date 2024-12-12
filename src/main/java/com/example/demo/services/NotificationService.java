@@ -64,6 +64,7 @@ public class NotificationService {
 	@Transactional
 	public void unsubscribeWithTransactional(UtilisateurEntity user) {
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			log.error("@@@ Delete");
 			userNotifRepository.deleteAllByUserAndTypeNotif(user, typeNotif);
 		}
 		log.error("@@@ End");
@@ -72,15 +73,19 @@ public class NotificationService {
 	@Transactional
     public void unsubscribeWithTransactionalUsingJpqlForDeletion(UtilisateurEntity user) {
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			log.error("@@@ Delete");
 			userNotifRepository.jpqlDelete(user, typeNotif);
 		}
+		log.error("@@@ End");
     }
 
 	@Transactional
 	public void unsubscribeWithTransactionRequiresNewOnDelete(UtilisateurEntity user) {
 		for (TypeNotificationEntity typeNotif : getTypeNotifsForbidden(user)) {
+			log.error("@@@ Delete");
 			((NotificationService) AopContext.currentProxy()).removeTypeNotifWithNewTransaction(user, typeNotif);
 		}
+		log.error("@@@ End");
 	}
 
 	@Transactional(propagation = Propagation.REQUIRES_NEW)

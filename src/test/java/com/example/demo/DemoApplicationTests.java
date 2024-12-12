@@ -68,6 +68,7 @@ class DemoApplicationTests {
 
 	@Test
 	void workingInSameConditionWithJpqlForDeletion() {
+		log.error("@@@ Start");
 		notificationService.unsubscribeWithTransactionalUsingJpqlForDeletion(user);
 		assertThat(userNotifRepository.findAll())
 			.isEmpty();
