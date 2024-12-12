@@ -29,14 +29,14 @@ public class UserNotifEntity {
 	@ManyToOne
 	@JoinColumn(name="PK_USER", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
-	private UtilisateurEntity user;
+	private UserEntity user;
 
 	@ManyToOne
 	@JoinColumn(name="PK_TYPENOTIFICATION", nullable = false)
 	@OnDelete(action = OnDeleteAction.CASCADE)
 	private TypeNotificationEntity typeNotif;
 
-	public UserNotifEntity(UtilisateurEntity user, TypeNotificationEntity typeNotif) {
+	public UserNotifEntity(UserEntity user, TypeNotificationEntity typeNotif) {
 		this.user = user;
 		this.typeNotif = typeNotif;
 	}

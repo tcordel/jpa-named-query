@@ -1,8 +1,8 @@
 package com.example.demo.repositories.custom;
 
 import com.example.demo.entities.TypeNotificationEntity;
-import com.example.demo.entities.UtilisateurEntity;
+import com.example.demo.entities.UserEntity;
 
 public interface CustomUserNotifRepository {
-	void criteriaDelete(UtilisateurEntity user, TypeNotificationEntity typeNofif);
+	void criteriaDelete(UserEntity user, TypeNotificationEntity typeNofif);
 }

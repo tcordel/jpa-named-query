@@ -2,7 +2,7 @@ package com.example.demo.repositories.custom.impl;
 
 import com.example.demo.entities.TypeNotificationEntity;
 import com.example.demo.entities.UserNotifEntity;
-import com.example.demo.entities.UtilisateurEntity;
+import com.example.demo.entities.UserEntity;
 import com.example.demo.repositories.custom.CustomUserNotifRepository;
 
 import jakarta.persistence.EntityManager;
@@ -19,11 +19,11 @@ public class CustomUserNotifRepositoryImpl implements CustomUserNotifRepository 
 	private EntityManager entityManager;
 
 	@Override
-	public void criteriaDelete(UtilisateurEntity user, TypeNotificationEntity typeNofif) {
+	public void criteriaDelete(UserEntity user, TypeNotificationEntity typeNofif) {
 		CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
 		CriteriaDelete<UserNotifEntity> criteriaQuery = criteriaBuilder.createCriteriaDelete(UserNotifEntity.class);
 		Root<UserNotifEntity> root = criteriaQuery.from(UserNotifEntity.class);
-		ParameterExpression<UtilisateurEntity> createUserParameter = criteriaBuilder.parameter(UtilisateurEntity.class);
+		ParameterExpression<UserEntity> createUserParameter = criteriaBuilder.parameter(UserEntity.class);
 		ParameterExpression<TypeNotificationEntity> createTypeNotifParameter = criteriaBuilder
 				.parameter(TypeNotificationEntity.class);
 		Query query = entityManager

@@ -14,12 +14,12 @@ import com.example.demo.entities.ApplicationEntity;
 import com.example.demo.entities.TypeNotificationEntity;
 import com.example.demo.entities.UserNotifAppliEntity;
 import com.example.demo.entities.UserNotifEntity;
-import com.example.demo.entities.UtilisateurEntity;
+import com.example.demo.entities.UserEntity;
 import com.example.demo.repositories.ApplicationRepository;
 import com.example.demo.repositories.TypeNotificationRepository;
 import com.example.demo.repositories.UserNotifAppliRepository;
 import com.example.demo.repositories.UserNotifRepository;
-import com.example.demo.repositories.UtilisateurRepository;
+import com.example.demo.repositories.UserRepository;
 import com.example.demo.services.NotificationService;
 
 import lombok.RequiredArgsConstructor;
@@ -37,18 +37,18 @@ class DemoApplicationTests {
 	@Autowired
 	UserNotifAppliRepository userNotifAppliRepository;
 	@Autowired
-	UtilisateurRepository utilisateurRepository;
+	UserRepository userRepository;
 	@Autowired
 	TypeNotificationRepository typeNotificationRepository;
 	@Autowired
 	ApplicationRepository applicationRepository;
 
-	UtilisateurEntity user;
+	UserEntity user;
 
 	@BeforeEach
 	void init() {
 		userNotifRepository.deleteAll();
-		user = utilisateurRepository.save(new UtilisateurEntity());
+		user = userRepository.save(new UserEntity());
 		TypeNotificationEntity typeNotif = typeNotificationRepository.save(new TypeNotificationEntity());
 		ApplicationEntity application = applicationRepository.save(new ApplicationEntity());
 		UserNotifEntity userNotif = userNotifRepository.save(new UserNotifEntity(user, typeNotif));
